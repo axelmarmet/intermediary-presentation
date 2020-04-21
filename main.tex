@@ -99,17 +99,17 @@
 \end{frame}
 
 \begin{frame}{Deadlock avoidance}
-    \begin{enumerate}
-        \item Lexer : String $\rightarrow$ List[Token]
-        \item Parser : List[Token] $\rightarrow$ AST
-        \item NameAnalyser : AST $\rightarrow$ AST
-        \item TypeChecker : AST $\rightarrow$ AST
-        \item \emph{TailRecPass} : AST $\rightarrow$ AST
-        \item \emph{InliningPass} : AST $\rightarrow$ AST
-        \item \emph{ConstPropPass} : AST $\rightarrow$ AST
-        \item CodeGen : AST $\rightarrow$ Module
-        \item \emph{OptiWasmPass} : Module $\rightarrow$ Module
-    \end{enumerate}
+  How to schedule execution without causing deadlock ?
+  \begin{columns}[T]
+    \begin{column}{0.45\textwidth}
+        How to schedule execution without causing deadlock ?
+    \end{column}
+    \begin{column}{0.1\textwidth}
+    \end{column}
+    \begin{column}{0.45\textwidth}
+      \includegraphics[scale=0.25]{blocking_unshared.png}
+    \end{column}
+  \end{columns}
 \end{frame}
 
 \section{Modification of the AST and Symbol table}
