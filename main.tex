@@ -61,36 +61,28 @@
 %\end{frame}
 %---------------------------------------------------------
 
-\section{Example}
+\section{Basic Idea}
 \begin{frame}[fragile]
-\frametitle{Examples}
-\begin{lstlisting}[basicstyle=\ttfamily]
-def sum(list : L.List)(acc : Int) : Int = {
-  list match {
-    case L.Nil() => acc
-    case L.Cons(t, h) => sum(t)(acc + h)
-  }
-}
-\end{lstlisting}
+\frametitle{Motivation}
+\begin{columns}[T]
+    \begin{column}{0.45\textwidth}
+      \begin{enumerate}
+          \item New iteration every two clock cycles
+          \item Each multiplier has an occupancy of $0.5$
+          \item Using only one multiplier would not hurt performance but diminish size of circuit
+      \end{enumerate}
+    \end{column}
+    \begin{column}{0.1\textwidth}
+    \end{column}
+    \begin{column}{0.45\textwidth}
+      \includegraphics[scale=0.28]{base_case.png}
+    \end{column}
+  \end{columns}
 \end{frame}
 
 \begin{frame}[fragile]
 \frametitle{Example}
-\begin{lstlisting}[basicstyle=\ttfamily]
-def sum(list:L.List, acc:Int): Int = {
-  var list_param : L.List = list;
-  var acc_parama : Int = acc;
-  loop {
-    list match {
-      case L.Nil() => acc
-      case L.Cons(t, h) => 
-        list = t;
-        acc = acc + h;
-        branch
-    } 
-  }
-}
-\end{lstlisting}
+
 \end{frame}
 
 \section{Pipeline}
