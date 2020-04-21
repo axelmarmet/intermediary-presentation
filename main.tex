@@ -66,11 +66,11 @@
 \frametitle{Motivation}
 \begin{columns}[T]
     \begin{column}{0.45\textwidth}
-      \begin{enumerate}
+      \begin{itemize}
           \item New iteration every two clock cycles
           \item Each multiplier has an occupancy of $0.5$
           \item Using only one multiplier would not hurt performance but diminish size of circuit
-      \end{enumerate}
+      \end{itemize}
     \end{column}
     \begin{column}{0.1\textwidth}
     \end{column}
@@ -81,12 +81,24 @@
 \end{frame}
 
 \begin{frame}[fragile]
-\frametitle{Example}
-
+\frametitle{Initial idea}
+\begin{columns}[T]
+    \begin{column}{0.45\textwidth}
+    We add two new components to enable sharing \newline
+    \begin{description}
+        \item[Selector] Responsible for selecting inputs in a way that ensures fairness and will never deadlock
+        \item[Distributor] Must send the resulting token to the correct outputs, is told where to send by the Selector through a FIFO
+    \end{description}
+    \end{column}
+    \begin{column}{0.1\textwidth}
+    \end{column}
+    \begin{column}{0.45\textwidth}
+      \includegraphics[scale=0.28]{shared_base_case.png}
+    \end{column}
+  \end{columns}
 \end{frame}
 
-\section{Pipeline}
-\begin{frame}{Pipeline}
+\begin{frame}{Deadlock avoidance}
     \begin{enumerate}
         \item Lexer : String $\rightarrow$ List[Token]
         \item Parser : List[Token] $\rightarrow$ AST
