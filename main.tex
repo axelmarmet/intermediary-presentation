@@ -54,16 +54,12 @@
 \frame{\titlepage}
 
 
-%---------------------------------------------------------
-%This block of code is for the table of contents after
-%the title page
-%\begin{frame}
-%\frametitle{Table of Contents}
-%\tableofcontents
-%\end{frame}
-%---------------------------------------------------------
+\begin{frame}
+\frametitle{Table of Contents}
+\tableofcontents
+\end{frame}
 
-\section{Basic Idea}
+\section{Running example}
 \begin{frame}[fragile]
 \frametitle{Motivation}
 \begin{columns}[T]
@@ -100,6 +96,7 @@
   \end{columns}
 \end{frame}
 
+\section{Deadlock avoidance}
 \begin{frame}{Deadlock avoidance}
   How to schedule execution without causing deadlock ?
   \begin{columns}[T]
@@ -121,7 +118,7 @@
 \begin{columns}
     \begin{column}{0.45\textwidth}
     We must enforce that all transactions from one BB happen before any from another BB (or the same in another iteration) \newline \newline
-    We use the same mechanism as LSQs to be informed of ...
+    We use the same mechanism as LSQs to be informed of the order of execution of the BBs
     \end{column}
     \begin{column}{0.1\textwidth}
     \end{column}
@@ -132,31 +129,30 @@
 \end{frame}
 
 \begin{frame}{Ordering}
-\begin{columns}
-    \begin{column}{0.45\textwidth}
-    We must enforce that all transactions from one BB happen before any from another BB (or the same in another iteration) \newline \newline
-    We use the same mechanism as LSQs to be informed of ...
-    \end{column}
-    \begin{column}{0.1\textwidth}
-    \end{column}
-    \begin{column}{0.45\textwidth}
-      \includegraphics[scale=0.25]{blocking_shared_solution.png}
-    \end{column}
-  \end{columns}
+For optimal buffer placement we want to be able to somehow indicate to the MILP model that the components are shared. The first idea was to modify the latencies and initiation intervals. Not ideal because incrementing latency correctly is not trivial. The second idea is to add to the control path to explicitly enforce an order per BB. (There won't be a lengthy paragraph like that in the final presentation, this is just to show how I wanna structure it)
 \end{frame}
 
+\begin{frame}{Explicit ordering for MILP}
+Nice picture here
+\end{frame}
+
+\section{Components}
 \begin{frame}{Selector}
-Four new AST nodes :
-\begin{itemize}
-    \item MutVar
-    \item Loop
-    \item Branch
-    \item Assign
-\end{itemize}
+Todo
 \end{frame}
 
 \begin{frame}{Distributor}
-    Funsig that knows if tail rec or not
+    \includegraphics[scale=0.35]{distributor.png}
+\end{frame}
+
+\section{Algorithm}
+\begin{frame}{Algorithm}
+Simplified pseudocode algorithm
+\end{frame}
+
+\section{Next steps}
+\begin{frame}{Next steps}
+Find a heuristic or algorithm to find best ordering without exhaustive search
 \end{frame}
 
 \end{document}
