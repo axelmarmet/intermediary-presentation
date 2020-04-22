@@ -10,6 +10,8 @@
 \usetheme{Madrid}
 \usecolortheme{beaver}
 
+\beamertemplatenavigationsymbolsempty
+
 \renewcommand{\emph}{\textcolor{red}}
 
 %------------------------------------------------------------
@@ -25,7 +27,7 @@
 
 \date[EPFL 2019] % (optional)
 
-\logo{\includegraphics[height=1cm]{EPFL_Logo_Digital_RGB_PROD-768x333.png}}
+%\logo{\includegraphics[height=1cm]{EPFL_Logo_Digital_RGB_PROD-768x333.png}}
 
 %End of title page configuration block
 %------------------------------------------------------------
@@ -101,19 +103,49 @@
 \begin{frame}{Deadlock avoidance}
   How to schedule execution without causing deadlock ?
   \begin{columns}[T]
-    \begin{column}{0.45\textwidth}
-        How to schedule execution without causing deadlock ?
+    \begin{column}{0.25\textwidth}
+      \includegraphics[scale=0.25]{blocking_unshared.png}
     \end{column}
     \begin{column}{0.1\textwidth}
+    \begin{center}
+        becomes
+    \end{center}
     \end{column}
-    \begin{column}{0.45\textwidth}
-      \includegraphics[scale=0.25]{blocking_unshared.png}
+    \begin{column}{0.25\textwidth}
+      \includegraphics[scale=0.25]{blocking_shared.png}
     \end{column}
   \end{columns}
 \end{frame}
 
-\section{Modification of the AST and Symbol table}
-\begin{frame}{Modification to the AST}
+\begin{frame}{Enforcing all transactions firing}
+\begin{columns}
+    \begin{column}{0.45\textwidth}
+    We must enforce that all transactions from one BB happen before any from another BB (or the same in another iteration) \newline \newline
+    We use the same mechanism as LSQs to be informed of ...
+    \end{column}
+    \begin{column}{0.1\textwidth}
+    \end{column}
+    \begin{column}{0.45\textwidth}
+      \includegraphics[scale=0.25]{blocking_shared_solution.png}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}{Ordering}
+\begin{columns}
+    \begin{column}{0.45\textwidth}
+    We must enforce that all transactions from one BB happen before any from another BB (or the same in another iteration) \newline \newline
+    We use the same mechanism as LSQs to be informed of ...
+    \end{column}
+    \begin{column}{0.1\textwidth}
+    \end{column}
+    \begin{column}{0.45\textwidth}
+      \includegraphics[scale=0.25]{blocking_shared_solution.png}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}{Selector}
 Four new AST nodes :
 \begin{itemize}
     \item MutVar
@@ -123,118 +155,8 @@ Four new AST nodes :
 \end{itemize}
 \end{frame}
 
-\section{}
-\begin{frame}{Modification to the Symbol Table}
+\begin{frame}{Distributor}
     Funsig that knows if tail rec or not
-\end{frame}
-
-\section{Parser}
-\begin{frame}[fragile]{Parser}
-     Simply need to modify function definitions and calls to signify if the function is tail rec or not. \\
-     Proposed syntax :
-     \begin{lstlisting}[basicstyle=\ttfamily]
-     def a(arg1 : Type1)(acc : Type2) : Type3 = {
-     
-        ...
-     
-     }
-     
-     ...
-     
-     a(2)(3)
-     \end{lstlisting}
-\end{frame}
-
-\section{TailRecPass}
-\begin{frame}{TailRecChecker}
-    Need to check the tail rec functions are indeed tail recs.\\
-    Check that all exit statement is either a function call to itself with no other operation or a value.
-\end{frame}
-
-\begin{frame}{TailRecMaker}
-    Assigns the arguments to new mutable variables.
-    Transform the body of tail rec function using a loop/branch as in the example.
-\end{frame}
-
-\section{Inliner}
-\begin{frame}{Inliner}
-    Inline function body based on some heuristic (probably depth of the AST). 
-\end{frame}
-
-\begin{frame}[fragile]
-\frametitle{ConstPropPass}
-\begin{lstlisting}[basicstyle=\tiny\ttfamily]
-    def fold(expr : Expr)(implicit consts : Map[Identifier, Literal[_]]) : Expr = 
-        expr match {
-        case Variable(name) => const.get(name) match {
-            case Some(lit) => lit
-            case None => expr
-        }
-        case Add(lhs, rhs) => (fold(lhs), fold(rhs)) match {
-            case 
-                (lit1:Literal[Int], 
-                lit2: Literal[Int]) => 
-                    literal(lit1.value + lit2.value)
-            case (e1, e2) => Add(e1, e2)
-        }
-        case If(cond, thenn, elze) => fold(cond) match {
-            case BooleanLiteral(b) => if (b) fold(thenn) else fold(elze)
-            case folded => If(folded, fold(thenn), fold(elze))
-        }
-        // all binary and unary operations
-        case Let(df, value, body) => 
-            fold(value) match {
-                case lit : Literal[_] => fold(body)(consts + (df.name -> i))
-                case val => Let(df, val, fold(body));
-            }
-        case Match(scrut, cases) =>  /* if scrut is lit replace match by expr
-                                        and in general fold all expressions on the rhs */
-        ...
-        case _ => expr
-    }
-\end{lstlisting}
-\end{frame}
-
-\begin{frame}[fragile]{OptiWasmPass}
-    Replace obvious optimisations i.e.
-    
-    \begin{columns}
-\begin{column}{0.45\textwidth}
-   \begin{lstlisting}[keywords={}, basicstyle=\ttfamily]
-    const 1 
-    if 
-        const 1
-    else
-        const 0
-    end
-    \end{lstlisting}
-\end{column}
-\begin{column}{0.1\textwidth}
-   $\rightarrow$
-\end{column}
-\begin{column}{0.45\textwidth}
-   \begin{lstlisting}[keywords={}, basicstyle=\ttfamily]
-    const 1
-    \end{lstlisting}
-\end{column}
-\end{columns}
-    or 
-    \begin{columns}
-    \begin{column}{0.45\textwidth}
-   \begin{lstlisting}[keywords={}, basicstyle=\ttfamily]
-    set idx
-    get idx
-    \end{lstlisting}
-\end{column}
-\begin{column}{0.1\textwidth}
-   $\rightarrow$
-\end{column}
-\begin{column}{0.45\textwidth}
-   \begin{lstlisting}[keywords={}, basicstyle=\ttfamily]
-    tee idx
-    \end{lstlisting}
-\end{column}
-\end{columns}
 \end{frame}
 
 \end{document}
