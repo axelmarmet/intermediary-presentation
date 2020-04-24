@@ -25,28 +25,7 @@
 
 \institute[EPFL] % (optional)
 
-\date[EPFL 2019] % (optional)
-
-%\logo{\includegraphics[height=1cm]{EPFL_Logo_Digital_RGB_PROD-768x333.png}}
-
-%End of title page configuration block
-%------------------------------------------------------------
-
-
-
-%------------------------------------------------------------
-%The next block of commands puts the table of contents at the 
-%beginning of each section and highlights the current section:
-
-%\AtBeginSection[]
-%{
-%  \begin{frame}
-%    \frametitle{Table of Contents}
-%    \tableofcontents[currentsection]
-%  \end{frame}
-%}
-%------------------------------------------------------------
-
+\date[2020] % (optional)
 
 \begin{document}
 
@@ -59,11 +38,28 @@
 \tableofcontents
 \end{frame}
 
-\section{Running example}
+\section{Introduction}
+\begin{frame}{Dataflow Circuits}
+    Dataflow circuits are ...
+\end{frame}
+\begin{frame}{Resource sharing}
+    There are two problems when sharing resources
+    \begin{enumerate}
+        \item Finding where to share, hard because there is no predetermined schedule
+        \item Share in a way that ensures correct and deadlock-free execution
+    \end{enumerate}
+\end{frame}
+\section{Motivation}
+\begin{frame}{Prerequisite information}
+    We define occupancy as the amount of tokens a component holds in steady state divided by the maximum amount of tokens it can hold. We already know how to obtain this value.\footnotemark
+    
+      \footnotetext{Josipovic et al., Buffer placement and sizing for high-performance dataflow circuits, FPGA'20}
+\end{frame}
 \begin{frame}[fragile]
 \frametitle{Motivation}
 \begin{columns}[T]
     \begin{column}{0.45\textwidth}
+ \newline
       \begin{itemize}
           \item New iteration every two clock cycles
           \item Each multiplier has an occupancy of $0.5$
@@ -73,7 +69,7 @@
     \begin{column}{0.1\textwidth}
     \end{column}
     \begin{column}{0.45\textwidth}
-      \includegraphics[scale=0.28]{base_case.png}
+      \includegraphics[scale=0.25]{base_case.png}
     \end{column}
   \end{columns}
 \end{frame}
@@ -82,11 +78,13 @@
 \frametitle{Initial idea}
 \begin{columns}[T]
     \begin{column}{0.45\textwidth}
-    We add two new components to enable sharing \newline
-    \begin{description}
-        \item[Selector] Responsible for selecting inputs in a way that ensures fairness and will never deadlock
-        \item[Distributor] Must send the resulting token to the correct outputs, is told where to send by the Selector through a FIFO
-    \end{description}
+    We add two new components to enable sharing \newline \newline
+    \emph{Selector} \newline
+    Responsible for selecting inputs in a way that ensures fairness and will never deadlock, augmented merge. 
+    \newline 
+    \newline
+    \emph{Distributor} \newline
+    Must send the resulting token to the correct outputs, is told where to send by the Selector  through a FIFO, augmented branch.
     \end{column}
     \begin{column}{0.1\textwidth}
     \end{column}
@@ -97,6 +95,20 @@
 \end{frame}
 
 \section{Deadlock avoidance}
+\begin{frame}{Necessary transparent buffer in distributor}
+    \begin{columns}[T]
+    \begin{column}{0.45\textwidth}
+    The distributor being able to hold the outputs is sometimes essential to allow the continuation of the computation. We enable this by using a 1 slot transparent buffer (TEHB)
+    \end{column}
+    \begin{column}{0.1\textwidth}
+    \end{column}
+    \begin{column}{0.45\textwidth}
+      \includegraphics[scale=0.28]{shared_base_case.png}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+%TODO add animation
 \begin{frame}{Deadlock avoidance}
   How to schedule execution without causing deadlock ?
   \begin{columns}[T]
@@ -112,6 +124,20 @@
       \includegraphics[scale=0.25]{blocking_shared.png}
     \end{column}
   \end{columns}
+\end{frame}
+\begin{frame}{Ordering}
+\emph{Among BBs} \\
+As the previous example highlighted we need to maintain an ordering among BBs. That is to say that all computations happening in one BB must be executed before any computations belonging to another BB begin. \newline \newline
+\emph{Per BB} \\
+We will also enforce an ordering among computations in the same BB. Although not strictly necessary it makes the sharing easier to model to the MILP.
+\end{frame}
+
+\begin{frame}{Modeling sharing to the MILP}
+Two possibilities
+\begin{enumerate}
+    \item Modify shared components's latencies and initiation intervals
+    \item Implement sharing using dataflow components
+\end{enumerate}
 \end{frame}
 
 \begin{frame}{Enforcing all transactions firing}
@@ -142,7 +168,7 @@ Todo
 \end{frame}
 
 \begin{frame}{Distributor}
-    \includegraphics[scale=0.35]{distributor.png}
+    \includegraphics[scale=0.3]{distributor.png}
 \end{frame}
 
 \section{Algorithm}
@@ -152,7 +178,10 @@ Simplified pseudocode algorithm
 
 \section{Next steps}
 \begin{frame}{Next steps}
-Find a heuristic or algorithm to find best ordering without exhaustive search
+\begin{itemize}
+    \item Find a heuristic or algorithm to find best ordering without exhaustive search
+    \item Get quantitative results
+\end{itemize}
 \end{frame}
 
 \end{document}
