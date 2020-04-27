@@ -51,7 +51,7 @@
     \begin{columns}[T]
     \begin{column}{0.45\textwidth}
         Dataflow circuits are latency-insensitive circuits where the data is represented by tokens and components communicate using handshakes. \\
-        They are composed of different Basic Blocks (BBs) that can be connected to each others. All control flow decisions occur at BB's edges, all the components in a BB are executed.
+       The components are grouped into BBs (Basic Blocks) connected by control flow edges; when a BB is triggered, all components inside it are executed
     \end{column}
     \begin{column}{0.45\textwidth}
         \begin{center}
@@ -70,7 +70,7 @@
 \end{frame}
 \section{Motivation}
 \begin{frame}{Prerequisite information}
-    We define occupancy as the amount of tokens a component holds in steady state divided by the maximum amount of tokens it can hold. We already know how to obtain this value.\footnotemark
+    We define occupancy as the amount of tokens a component holds in steady state divided by the maximum number of tokens it can hold. We already know how to obtain this value.\footnotemark
     
       \footnotetext{Josipovic et al., Buffer placement and sizing for high-performance dataflow circuits, FPGA'20}
 \end{frame}
@@ -102,7 +102,7 @@
     \newline 
     \newline
     \emph{Distributor} \newline
-    Must send the resulting token to the correct outputs, is told where to send by the Selector through a FIFO..
+    Must send the resulting token to the correct outputs, is told where to send by the Selector through a FIFO.
     \end{column}
     \begin{column}{0.45\textwidth}
         \begin{center}
@@ -149,12 +149,12 @@
 \end{frame}
 \begin{frame}{Ordering}
 \emph{Among BBs} \\
-As the previous example highlighted we need to maintain an ordering among BBs. That is to say that all computations happening in one BB must be executed before any computations belonging to another BB begin. \newline \newline
+We must ensure that all shared computations from a BB must happen before other shared computations start \newline \newline
 \emph{Per BB} \\
 We will also enforce an ordering among computations in the same BB. Although not strictly necessary it makes the sharing easier to model to the MILP.
 \end{frame}
 
-\begin{frame}{Modeling sharing to the MILP}
+\begin{frame}{Modelling sharing to the MILP}
 Two possibilities
 \begin{enumerate}
     \item Modify shared components's latencies and initiation intervals
@@ -182,6 +182,19 @@ Two possibilities
   \end{columns}
 \end{frame}
 
+\begin{frame}{Disadvantage of latency and II}
+    \begin{columns}[T]
+    \begin{column}{0.45\textwidth}
+We ended up choosing the dataflow components approach because updating latencies depends on buffer placement elsewhere in the dataflow circuits. For example latency does not need to be increased in the shown dataflow circuit due to the supplementary buffer.    
+    \end{column}
+    \begin{column}{0.45\textwidth}
+    \begin{center}
+     \includegraphics[scale=0.28]{latency_with_buffer.png}
+    \end{center}
+    \end{column}
+\end{columns}
+\end{frame}
+
 \begin{frame}{Modelling using dataflow components}
     \begin{columns}[T]
     \begin{column}{0.3\textwidth}
@@ -193,18 +206,6 @@ Two possibilities
     \end{center}
     \end{column}
   \end{columns}\end{frame}
-
-\begin{frame}{Final choice}
-    \begin{columns}[T]
-    \begin{column}{0.45\textwidth}
-We ended up choosing the dataflow components approach because updating latencies depends on buffer placement elsewhere in the dataflow circuits. For example latency does not need to be increased in the shown dataflow circuit due to the supplementary buffer.    \end{column}
-    \begin{column}{0.45\textwidth}
-    \begin{center}
-     \includegraphics[scale=0.28]{latency_with_buffer.png}
-    \end{center}
-    \end{column}
-\end{columns}
-\end{frame}
 
 \begin{frame}{Model vs reality}
 Using additional components is great for modelling sharing but actually implementing like it would become quite costly due to the amount of lazy forks and buffers. As such we show how we get from the simple but costly way of sharing to the more optimized one.
@@ -227,7 +228,13 @@ One lazy fork necessary per shared component
 \begin{frame}{Optimized component}
 One lazy fork necessary per BB. \emph{INPUT\_SEL} takes a one hot encoding of the BBs and elastically output the order of the triggered BB to the muxes. 
 \begin{center}
-\includegraphics[scale=0.4]{opti_selector.png}
+\includegraphics[scale=0.35]{opti_selector.png}
+\end{center}
+\end{frame}
+
+\begin{frame}{INPUT SEL}
+\begin{center}
+\includegraphics[scale=0.27]{SEL_INPUT.png}
 \end{center}
 \end{frame}
 
@@ -277,7 +284,15 @@ We are given the disjoint set information that we use exhaustively in our algori
             \State s.add(merge\_groups)
         \EndFor
     \EndFor
-    
+    \algstore{myAlgo}
+\end{algorithmic}
+\end{frame}
+
+\begin{frame}[fragile]{Algorithm}
+ \small
+ \scriptsize
+\begin{algorithmic}[1]
+    \algrestore{myAlgo}
     \LineComment inter-set
     \State global\_merge\_groups = \{\}
     \For{$s \in disjoint\_sets$}
@@ -291,8 +306,6 @@ We are given the disjoint set information that we use exhaustively in our algori
     \For{$n \in \{ n \mid n \in nodes,  \neg\exists s \in disjoint\_set :\, n \in s \}$ }
         \State global\_merge\_groups(random\_index).add(n)
     \EndFor
-    
-    
 \end{algorithmic}
 \end{frame}
 
