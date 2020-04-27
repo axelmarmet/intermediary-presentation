@@ -71,7 +71,19 @@
 \section{Motivation}
 \begin{frame}{Prerequisite information}
     We define occupancy as the amount of tokens a component holds in steady state divided by the maximum number of tokens it can hold. We already know how to obtain this value.\footnotemark
-    
+    \begin{columns}[T]
+    \begin{column}{0.45\textwidth}
+        \begin{center}
+      \includegraphics[scale=0.25]{occupancy_25.png} \\
+                Multiplier with occupancy $0.25$ 
+    \end{center}    \end{column}
+    \begin{column}{0.45\textwidth}
+ \begin{center}
+      \includegraphics[scale=0.25]{occupancy_50.png} \\
+        Multiplier with occupancy $0.5$ 
+    \end{center}
+    \end{column}
+  \end{columns}
       \footnotetext{Josipovic et al., Buffer placement and sizing for high-performance dataflow circuits, FPGA'20}
 \end{frame}
 \begin{frame}[fragile]
