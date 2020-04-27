@@ -126,6 +126,7 @@
 \end{frame}
 
 \section{Deadlock avoidance}
+\newcommand{\tehbAnimation}[1]{
 \begin{frame}{Necessary transparent buffer in distributor}
     \begin{columns}[T]
     \begin{column}{0.45\textwidth}
@@ -133,11 +134,18 @@
     \end{column}
     \begin{column}{0.45\textwidth}    
     \begin{center}
-      \includegraphics[scale=0.25]{shared_base_case.png}
+      \includegraphics[scale=0.25]{#1}
     \end{center}
     \end{column}
   \end{columns}
 \end{frame}
+}
+
+\tehbAnimation{animation_tehb_0.png}
+\tehbAnimation{animation_tehb_1.png}
+\tehbAnimation{animation_tehb_2.png}
+\tehbAnimation{animation_tehb_3.png}
+
 
 %TODO add animation
 \begin{frame}{Deadlock avoidance}
