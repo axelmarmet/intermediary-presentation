@@ -219,14 +219,14 @@ Using additional components is great for modelling sharing but actually implemen
 \end{frame}
 
 \begin{frame}{Unoptimized component}
-One lazy fork necessary per shared component
+One lazy fork necessary per shared component.
 \begin{center}
 \includegraphics[scale=0.4]{simple_selector.png}
 \end{center}
 \end{frame}
 
 \begin{frame}{Optimized component}
-One lazy fork necessary per BB. \emph{INPUT\_SEL} takes a one hot encoding of the BBs and elastically output the order of the triggered BB to the muxes. 
+One lazy fork necessary per BB.
 \begin{center}
 \includegraphics[scale=0.35]{opti_selector.png}
 \end{center}
