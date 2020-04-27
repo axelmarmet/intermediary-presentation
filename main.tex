@@ -55,11 +55,12 @@
     \end{column}
     \begin{column}{0.45\textwidth}
         \begin{center}
-      \includegraphics[scale=0.4]{dataflow_example.png}
-      Example from Speculative Dataflow Circuits Paper //Not sure how to quote properly
+      \includegraphics[scale=0.35]{datflow_example.jpg}
+      Example from\footnotemark
     \end{center}
     \end{column}
   \end{columns}
+        \footnotetext{Josipovic et al., Buffer placement and sizing for high-performance dataflow circuits, FPGA'20}
 \end{frame}
 \begin{frame}{Resource sharing}
     There are two problems when sharing resources
@@ -154,11 +155,29 @@
     \end{column}
     \begin{column}{0.25\textwidth}
         \begin{center}
-      \includegraphics[scale=0.25]{blocking_shared.png}
+      \includegraphics[scale=0.21]{deadlock_1.png}
     \end{center}
     \end{column}
   \end{columns}
 \end{frame}
+
+\newcommand{\deadlockAnimation}[1]{
+\begin{frame}{Deadlock avoidance}
+\begin{center}
+\includegraphics[scale=0.25]{#1}
+\end{center}
+\end{frame}
+}
+
+\deadlockAnimation{deadlock_2.png}
+\deadlockAnimation{deadlock_3.png}
+\deadlockAnimation{deadlock_4.png}
+\deadlockAnimation{deadlock_45.png}
+\deadlockAnimation{deadlock_5.png}
+\deadlockAnimation{deadlock_6.png}
+
+
+
 \begin{frame}{Ordering}
 \emph{Among BBs} \\
 We must ensure that all shared computations from a BB must happen before other shared computations start \newline \newline
