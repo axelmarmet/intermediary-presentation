@@ -3,6 +3,14 @@
 \usepackage[utf8]{inputenc}
 \usepackage[english]{babel} 
 \usepackage{listings}
+\usepackage{amsmath}
+\usepackage{algorithm}
+\usepackage[noend]{algpseudocode}
+\algdef{SE}[DOWHILE]{Do}{doWhile}{\algorithmicdo}[1]{\algorithmicwhile\ #1}%
+\algnewcommand{\LineComment}[1]{\State \(\triangleright\) #1}
+
+%\usepackage{algorithmic}
+%\algnewcommand{\LineComment}[1]{\State \(\triangleright\) #1}
 
 \usepackage{parcolumns}
 
@@ -14,7 +22,7 @@
 
 \renewcommand{\emph}{\textcolor{red}}
 
-%------------------------------------------------------------
+%------------------------------------------------------------\usepackage{amsmath,amssymb,amsthm,algorithmic,algorithm}
 %This block of code defines the information to appear in the
 %Title page
 \title[Resource Sharing] %optional
@@ -40,7 +48,18 @@
 
 \section{Introduction}
 \begin{frame}{Dataflow Circuits}
-    Dataflow circuits are ...
+    \begin{columns}[T]
+    \begin{column}{0.45\textwidth}
+        Dataflow circuits are latency-insensitive circuits where the data is represented by tokens and components communicate using handshakes. \\
+        They are composed of different Basic Blocks (BBs) that can be connected to each others. All control flow decisions occur at BB's edges, all the components in a BB are executed.
+    \end{column}
+    \begin{column}{0.45\textwidth}
+        \begin{center}
+      \includegraphics[scale=0.4]{dataflow_example.png}
+      Example from Speculative Dataflow Circuits Paper //Not sure how to quote properly
+    \end{center}
+    \end{column}
+  \end{columns}
 \end{frame}
 \begin{frame}{Resource sharing}
     There are two problems when sharing resources
@@ -59,17 +78,16 @@
 \frametitle{Motivation}
 \begin{columns}[T]
     \begin{column}{0.45\textwidth}
- \newline
       \begin{itemize}
           \item New iteration every two clock cycles
           \item Each multiplier has an occupancy of $0.5$
           \item Using only one multiplier would not hurt performance but diminish size of circuit
       \end{itemize}
     \end{column}
-    \begin{column}{0.1\textwidth}
-    \end{column}
     \begin{column}{0.45\textwidth}
+        \begin{center}
       \includegraphics[scale=0.25]{base_case.png}
+    \end{center}
     \end{column}
   \end{columns}
 \end{frame}
@@ -80,16 +98,16 @@
     \begin{column}{0.45\textwidth}
     We add two new components to enable sharing \newline \newline
     \emph{Selector} \newline
-    Responsible for selecting inputs in a way that ensures fairness and will never deadlock, augmented merge. 
+    Responsible for selecting inputs in a way that ensures fairness and will never deadlock. 
     \newline 
     \newline
     \emph{Distributor} \newline
-    Must send the resulting token to the correct outputs, is told where to send by the Selector  through a FIFO, augmented branch.
-    \end{column}
-    \begin{column}{0.1\textwidth}
+    Must send the resulting token to the correct outputs, is told where to send by the Selector through a FIFO..
     \end{column}
     \begin{column}{0.45\textwidth}
-      \includegraphics[scale=0.28]{shared_base_case.png}
+        \begin{center}
+      \includegraphics[scale=0.25]{shared_base_case.png}
+    \end{center}
     \end{column}
   \end{columns}
 \end{frame}
@@ -100,10 +118,10 @@
     \begin{column}{0.45\textwidth}
     The distributor being able to hold the outputs is sometimes essential to allow the continuation of the computation. We enable this by using a 1 slot transparent buffer (TEHB)
     \end{column}
-    \begin{column}{0.1\textwidth}
-    \end{column}
-    \begin{column}{0.45\textwidth}
-      \includegraphics[scale=0.28]{shared_base_case.png}
+    \begin{column}{0.45\textwidth}    
+    \begin{center}
+      \includegraphics[scale=0.25]{shared_base_case.png}
+    \end{center}
     \end{column}
   \end{columns}
 \end{frame}
@@ -113,7 +131,9 @@
   How to schedule execution without causing deadlock ?
   \begin{columns}[T]
     \begin{column}{0.25\textwidth}
+        \begin{center}
       \includegraphics[scale=0.25]{blocking_unshared.png}
+    \end{center}
     \end{column}
     \begin{column}{0.1\textwidth}
     \begin{center}
@@ -121,7 +141,9 @@
     \end{center}
     \end{column}
     \begin{column}{0.25\textwidth}
+        \begin{center}
       \includegraphics[scale=0.25]{blocking_shared.png}
+    \end{center}
     \end{column}
   \end{columns}
 \end{frame}
@@ -140,10 +162,12 @@ Two possibilities
 \end{enumerate}
 \end{frame}
 
-\begin{frame}{Modeling using latency and II}
+\begin{frame}{Modelling using latency and II}
       \begin{columns}[T]
     \begin{column}{0.25\textwidth}
+        \begin{center}
       \includegraphics[scale=0.25]{latency_unshared.png}
+    \end{center}
     \end{column}
     \begin{column}{0.1\textwidth}
     \begin{center}
@@ -151,49 +175,125 @@ Two possibilities
     \end{center}
     \end{column}
     \begin{column}{0.25\textwidth}
+        \begin{center}
       \includegraphics[scale=0.25]{latency_shared.png}
+    \end{center}
     \end{column}
   \end{columns}
 \end{frame}
 
-\begin{frame}{Modeling using dataflow components}
-    
-\end{frame}
-
-\begin{frame}{Enforcing all transactions firing}
-\begin{columns}
-    \begin{column}{0.45\textwidth}
-    We must enforce that all transactions from one BB happen before any from another BB (or the same in another iteration) \newline \newline
-    We use the same mechanism as LSQs to be informed of the order of execution of the BBs
-    \end{column}
-    \begin{column}{0.1\textwidth}
+\begin{frame}{Modelling using dataflow components}
+    \begin{columns}[T]
+    \begin{column}{0.3\textwidth}
+    We use the control path of the BB to enforce an ordering
     \end{column}
     \begin{column}{0.45\textwidth}
-      \includegraphics[scale=0.25]{blocking_shared_solution.png}
+        \begin{center}
+      \includegraphics[scale=0.25]{dataflow_shared.png}
+    \end{center}
     \end{column}
-  \end{columns}
+  \end{columns}\end{frame}
+
+\begin{frame}{Final choice}
+    \begin{columns}[T]
+    \begin{column}{0.45\textwidth}
+We ended up choosing the dataflow components approach because updating latencies depends on buffer placement elsewhere in the dataflow circuits. For example latency does not need to be increased in the shown dataflow circuit due to the supplementary buffer.    \end{column}
+    \begin{column}{0.45\textwidth}
+    \begin{center}
+     \includegraphics[scale=0.28]{latency_with_buffer.png}
+    \end{center}
+    \end{column}
+\end{columns}
 \end{frame}
 
-\begin{frame}{Ordering}
-For optimal buffer placement we want to be able to somehow indicate to the MILP model that the components are shared. The first idea was to modify the latencies and initiation intervals. Not ideal because incrementing latency correctly is not trivial. The second idea is to add to the control path to explicitly enforce an order per BB. (There won't be a lengthy paragraph like that in the final presentation, this is just to show how I wanna structure it)
-\end{frame}
-
-\begin{frame}{Explicit ordering for MILP}
-Nice picture here
+\begin{frame}{Model vs reality}
+Using additional components is great for modelling sharing but actually implementing like it would become quite costly due to the amount of lazy forks and buffers. As such we show how we get from the simple but costly way of sharing to the more optimized one.
 \end{frame}
 
 \section{Components}
-\begin{frame}{Selector}
-Todo
+\begin{frame}{Given to the MILP}
+\begin{center}
+\includegraphics[scale=0.4]{given_to_milp(1).png}
+\end{center}
 \end{frame}
 
-\begin{frame}{Distributor}
-    \includegraphics[scale=0.3]{distributor.png}
+\begin{frame}{Unoptimized component}
+One lazy fork necessary per shared component
+\begin{center}
+\includegraphics[scale=0.4]{simple_selector.png}
+\end{center}
+\end{frame}
+
+\begin{frame}{Optimized component}
+One lazy fork necessary per BB. \emph{INPUT\_SEL} takes a one hot encoding of the BBs and elastically output the order of the triggered BB to the muxes. 
+\begin{center}
+\includegraphics[scale=0.4]{opti_selector.png}
+\end{center}
+\end{frame}
+
+\begin{frame}{Full system}
+\begin{center}
+\includegraphics[scale=0.3]{full_example.png}
+\end{center}
 \end{frame}
 
 \section{Algorithm}
 \begin{frame}{Algorithm}
-Simplified pseudocode algorithm
+\begin{columns}
+
+\end{columns}
+    \begin{columns}[T]
+    \begin{column}{0.45\textwidth}
+We are given the disjoint set information that we use exhaustively in our algorithm by Josipovic et al., Buffer placement and sizing for high-performance dataflow circuits, FPGA'20
+\end{column}
+    \begin{column}{0.45\textwidth}
+    \begin{center}
+     \includegraphics[scale=0.4]{input_algorithm.png}
+    \end{center}
+    \end{column}
+\end{columns}
+\end{frame}
+
+\begin{frame}[fragile]{Algorithm}
+ \small
+ \scriptsize
+\begin{algorithmic}[1]
+    \LineComment intra-set
+    \For{s $\in$ disjoint\_sets}
+        \For{mg $\in$ marked\_graphs}
+            \State merge\_groups = $\{ n \mid n \in s, is\_shareable(n)\}$
+            \Do
+                \For{$g_1, g_2 \in merge\_groups, g_1 \neq g_2$}
+                    \If{$ g_1.occupancy + g_2.occupancy \leq 1$}
+                        \For{ ord $\in$ possible\_orderings$(g_1 \cup g_2)$}
+                            \LineComment we use the MILP here
+                            \If{$does\_not\_affect\_throughput(ord)$}
+                                \State merge\_groups.update($g_1, g_2, g_1 \cup g_2, ord$) 
+                            \EndIf
+                        \EndFor
+                    \EndIf
+                \EndFor
+            \doWhile{merge\_groups changed}
+            \State s.add(merge\_groups)
+        \EndFor
+    \EndFor
+    
+    \LineComment inter-set
+    \State global\_merge\_groups = \{\}
+    \For{$s \in disjoint\_sets$}
+        \State i = 0;
+        \For{$merge\_group \in s$}
+            \State global\_merge\_groups($i++$).add(merge\_group)
+        \EndFor
+    \EndFor
+    
+    \LineComment extra-set
+    \For{$n \in \{ n \mid n \in nodes,  \neg\exists s \in disjoint\_set :\, n \in s \}$ }
+        \State global\_merge\_groups(random\_index).add(n)
+    \EndFor
+    
+    
+\end{algorithmic}
 \end{frame}
 
 \section{Next steps}
