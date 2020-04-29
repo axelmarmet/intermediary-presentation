@@ -105,8 +105,8 @@
   \end{columns}
 \end{frame}
 
-\begin{frame}[fragile]
-\frametitle{Initial idea}
+\newcommand{\initialAnimation}[1]{
+\begin{frame}{Initial idea}
 \begin{columns}[T]
     \begin{column}{0.45\textwidth}
     We add two new components to enable sharing \newline \newline
@@ -119,11 +119,19 @@
     \end{column}
     \begin{column}{0.45\textwidth}
         \begin{center}
-      \includegraphics[scale=0.25]{shared_base_case.png}
+      \includegraphics[scale=0.25]{#1}
     \end{center}
     \end{column}
   \end{columns}
 \end{frame}
+}
+
+\initialAnimation{animation_tehb_0.png}
+\initialAnimation{animation_initial_1.png}
+\initialAnimation{animation_initial_2.png}
+\initialAnimation{animation_initial_3.png}
+\initialAnimation{initial_animation_4.png}
+\initialAnimation{initial_animation_5.png}
 
 \section{Deadlock avoidance}
 \newcommand{\tehbAnimation}[1]{
@@ -253,7 +261,7 @@ Using additional components is great for modelling sharing but actually implemen
 \section{Components}
 \begin{frame}{Given to the MILP}
 \begin{center}
-\includegraphics[scale=0.4]{given_to_milp(1).png}
+\includegraphics[scale=0.4]{given_to_milp.png}
 \end{center}
 \end{frame}
 
@@ -351,6 +359,7 @@ We are given the disjoint set information that we use exhaustively in our algori
 \section{Next steps}
 \begin{frame}{Next steps}
 \begin{itemize}
+    \item Test the current flow
     \item Find a heuristic or algorithm to find best ordering without exhaustive search
     \item Get quantitative results
 \end{itemize}
